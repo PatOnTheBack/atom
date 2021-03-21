@@ -33,7 +33,7 @@ describe("Archive-view", () => {
 				["zipped/script.coffee",        base + "coffee-icon",    "medium-maroon"],
 				["zipped/script.js",            base + "js-icon",        "medium-yellow"],
 				["zipped/text.txt",             base + "icon-file-text", "medium-blue"],
-				["zipped/z.foobarz",            base + "default-icon"]
+				["zipped/z.foobarz",            base + "default-icon"],
 			];
 			
 			it("shows an icon next to its filename", () =>
@@ -43,16 +43,16 @@ describe("Archive-view", () => {
 				assertIconClasses(ArchiveView.entries, (classes.push(
 					["zipped/.git/HEAD",        base + "database-icon", "medium-red"],
 					["zipped/apache2/magic",    base + "apache-icon",   "medium-purple"],
-					["zipped/apache2/psionics", base + "default-icon"]
+					["zipped/apache2/psionics", base + "default-icon"],
 				) && classes)));
 			
 			when("colours are disabled", () =>
 				it("shows an uncoloured icon", () => {
-					const iconClasses   = classes.map(args => args.slice(0,2));
+					const iconClasses   = classes.map(args => args.slice(0, 2));
 					const colourClasses = classes.map(a => a[2] ? [a[0], a[2]] : null).filter(Boolean);
 					Options.set("coloured", false);
 					assertIconClasses(ArchiveView.entries, iconClasses);
-					assertIconClasses(ArchiveView.entries, colourClasses, true);
+					assertIconClasses(ArchiveView.entries, colourClasses, {negate: true});
 					Options.set("coloured", true);
 					assertIconClasses(ArchiveView.entries, iconClasses);
 					assertIconClasses(ArchiveView.entries, colourClasses);
@@ -97,11 +97,11 @@ describe("Archive-view", () => {
 					["zipped/.meteor",          base + "meteor-icon  dark-orange"],
 					["zipped/.vagrant",         base + "vagrant-icon medium-cyan"],
 					["zipped/.bundle",          base + "package-icon"],
-					["zipped/.framework",       base + "dylib-icon"],
+					["zipped/.framework",       base + "icon-file-directory"],
 					["zipped/.github",          base + "github-icon"],
 					["zipped/.svn",             base + "svn-icon"],
 					["zipped/.tmBundle",        base + "textmate-icon"],
-					["zipped/.xcodeproj",       base + "appstore-icon"]
+					["zipped/.xcodeproj",       base + "appstore-icon"],
 				]));
 			
 			when("colours are disabled", () =>
@@ -114,7 +114,7 @@ describe("Archive-view", () => {
 						["zipped/.atom",            "dark-green"],
 						["zipped/.git",             "medium-red"],
 						["zipped/.meteor",          "dark-orange"],
-						["zipped/.vagrant",         "medium-cyan"]
+						["zipped/.vagrant",         "medium-cyan"],
 					];
 					const iconClasses = [
 						["zipped/bower_components", base + "bower-icon"],
@@ -124,10 +124,10 @@ describe("Archive-view", () => {
 						["zipped/.atom",            base + "atom-icon"],
 						["zipped/.git",             base + "git-icon"],
 						["zipped/.meteor",          base + "meteor-icon"],
-						["zipped/.vagrant",         base + "vagrant-icon"]
+						["zipped/.vagrant",         base + "vagrant-icon"],
 					];
 					Options.set("coloured", false);
-					assertIconClasses(ArchiveView.entries, colourClasses, true);
+					assertIconClasses(ArchiveView.entries, colourClasses, {negate: true});
 					assertIconClasses(ArchiveView.entries, iconClasses);
 					Options.set("coloured", true);
 					assertIconClasses(ArchiveView.entries, colourClasses);

@@ -65,14 +65,18 @@ module.exports = {
  *
  * @param {Array}   nodes
  * @param {Array}   assertions
- * @param {Boolean} [negate=false]
+ * @param {Object}  [options={}]
+ * @param {Boolean} [options.negate=false]
+ * @param {Boolean} [options.ignoreMissing=false]
  * @throws {AssertionError} A node did not have the expected classes
  * @throws {ReferenceError} A node listed in `assertions` doesn't exist
  * @internal
  */
-function assertIconClasses(nodes, assertions, negate = false){
+function assertIconClasses(nodes, assertions, options = {}){
+	expect(options).to.be.an("object");
 	for(let [name, ...classes] of assertions){
 		if(!nodes[name]){
+			if(options.ignoreMissing) continue;
 			Object.freeze(nodes);
 			headless
 				? console.error(`Node for "${name}" not found in list`)
@@ -80,7 +84,7 @@ function assertIconClasses(nodes, assertions, negate = false){
 			throw new ReferenceError(`Node for "${name}" not found`);
 		}
 		classes = collectStrings(classes).join(" ");
-		negate
+		options.negate
 			? expect(nodes[name], `Node ${name}`).not.to.have.class(classes)
 			: expect(nodes[name], `Node ${name}`).to.have.class(classes);
 	}
@@ -148,7 +152,7 @@ function getTempDir(){
 	const tmp = require("tmp");
 	return tmpDir = tmp.dirSync({
 		prefix: "file-icons@",
-		mode:   0o755
+		mode:   0o755,
 	});
 }
 
@@ -257,7 +261,8 @@ function rm(path){
 	try{
 		fs.unlinkSync(path);
 		FileSystem.get(path).destroy();
-	} finally{ }
+	}
+	catch{}
 }
 
 
@@ -311,7 +316,7 @@ async function setup(name, opts = {}){
 	
 	// Block cursor from stealing focus during specs
 	if(!headless){
-		let onPress = event => {
+		const onPress = event => {
 			event.stopImmediatePropagation();
 			event.preventDefault();
 			return false;

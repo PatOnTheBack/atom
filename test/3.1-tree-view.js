@@ -5,7 +5,7 @@ const Options = require("../lib/options.js");
 
 
 describe("Tree-view", () => {
-	const {assertIconClasses, resetOptions, setTheme} = require("./utils");
+	const {assertIconClasses, resetOptions, setTheme, wait} = require("./utils");
 	
 	before(() => {
 		resetOptions();
@@ -30,7 +30,7 @@ describe("Tree-view", () => {
 		["markdown.md",           "medium-blue"],
 		["package.json",          "medium-red"],
 		["README.md",             "medium-blue"],
-		["text.txt",              "medium-blue"]
+		["text.txt",              "medium-blue"],
 	];
 	
 	
@@ -46,7 +46,7 @@ describe("Tree-view", () => {
 					["markdown.md",     "markdown-icon"],
 					["package.json",    "npm-icon"],
 					["README.md",       "book-icon"],
-					["text.txt",        "icon-file-text"]
+					["text.txt",        "icon-file-text"],
 				]);
 				
 				TreeView.expand("subfolder");
@@ -55,7 +55,7 @@ describe("Tree-view", () => {
 					["subfolder/almighty.c",  "name icon c-icon"],
 					["subfolder/fad.jsx",     "jsx-icon"],
 					["subfolder/markup.html", "html5-icon"],
-					["subfolder/script.js",   "js-icon"]
+					["subfolder/script.js",   "js-icon"],
 				]);
 			});
 			
@@ -64,8 +64,8 @@ describe("Tree-view", () => {
 					[".default-config", "icon-file-text"],
 					["data.json",       "icon-file-text"],
 					["la.tex",          "icon-file-text"],
-					["markdown.md",     "icon-file-text"]
-				], true);
+					["markdown.md",     "icon-file-text"],
+				], {negate: true});
 			});
 			
 			when("coloured icons are enabled", () =>
@@ -78,7 +78,7 @@ describe("Tree-view", () => {
 						["markdown.md",  "medium-blue"],
 						["package.json", "medium-red"],
 						["README.md",    "medium-blue"],
-						["text.txt",     "medium-blue"]
+						["text.txt",     "medium-blue"],
 					]);
 				}));
 			
@@ -88,8 +88,8 @@ describe("Tree-view", () => {
 					assertIconClasses(TreeView.entries, [
 						...allColouredFiles,
 						["la.tex",   "medium-blue dark-blue"],
-						[".bowerrc", "medium-orange medium-yellow"]
-					], true);
+						[".bowerrc", "medium-orange medium-yellow"],
+					], {negate: true});
 				}));
 			
 			when("coloured icons are enabled later", () =>
@@ -98,24 +98,26 @@ describe("Tree-view", () => {
 					assertIconClasses(TreeView.entries, [
 						...allColouredFiles,
 						["la.tex",   "medium-blue"],
-						[".bowerrc", "medium-yellow"]
+						[".bowerrc", "medium-yellow"],
 					]);
 				}));
 			
 			when("in a Git repository", () => {
-				it("shows the default repo-icon for the root directory", () =>
-					TreeView.entries["."].className.should.equal("name icon icon-repo"));
+				it("shows the default repo-icon for the root directory", () => {
+					const classes = TreeView.entries["."].className.trim().split(/\s+/).sort();
+					classes.should.eql(["icon", "icon-repo", "name"]);
+				});
 				
 				when('the "Only colour when changed" setting is enabled', () => {
 					describe("If the file is unmodified", () =>
 						it("doesn't show a coloured icon", () => {
 							assertIconClasses(TreeView.entries, allColouredFiles);
 							Options.set("colourChangedOnly", true);
-							assertIconClasses(TreeView.entries, allColouredFiles, true);
+							assertIconClasses(TreeView.entries, allColouredFiles, {negate: true});
 							Options.set("coloured", false);
-							assertIconClasses(TreeView.entries, allColouredFiles, true);
+							assertIconClasses(TreeView.entries, allColouredFiles, {negate: true});
 							Options.set("coloured", true);
-							assertIconClasses(TreeView.entries, allColouredFiles, true);
+							assertIconClasses(TreeView.entries, allColouredFiles, {negate: true});
 						}));
 					
 					describe("If the file is modified", () =>
@@ -195,15 +197,15 @@ describe("Tree-view", () => {
 			it("shows the icon next to its name", () => {
 				assertIconClasses(TreeView.entries, [
 					["Dropbox",      "dropbox-icon medium-blue"],
-					["node_modules", "node-icon medium-green"]
+					["node_modules", "node-icon medium-green"],
 				]);
 			});
 			
 			it("removes the built-in icon class", () => {
 				assertIconClasses(TreeView.entries, [
 					["Dropbox",      "icon-file-directory"],
-					["node_modules", "icon-file-directory"]
-				], true);
+					["node_modules", "icon-file-directory"],
+				], {negate: true});
 			});
 		});
 		
@@ -212,14 +214,15 @@ describe("Tree-view", () => {
 				TreeView.entries["subfolder"].should.have.class("name icon icon-file-directory")));
 		
 		when("it contains a submodule", () => {
-			it("shows the default icon for submodules", () => {
+			it("shows the default icon for submodules", async () => {
 				TreeView.expand(".bundle");
 				TreeView.refresh();
+				await wait(500);
 				assertIconClasses(TreeView.entries, [
 					[".bundle/node_modules",    "name icon icon-file-submodule"],
 					[".bundle/submodule-1",     "name icon icon-file-submodule"],
 					[".bundle/submodule-2",     "name icon icon-file-submodule"],
-					[".bundle/syntax.tmbundle", "name icon icon-file-submodule"]
+					[".bundle/syntax.tmbundle", "name icon icon-file-submodule"],
 				]);
 			});
 			
@@ -244,22 +247,22 @@ describe("Tree-view", () => {
 				["symlinks/late.x",       "name icon icon-file-symlink-file"],
 				["symlinks/empty.file",   "name icon icon-file-symlink-file"],
 				["symlinks/node_modules", "name icon icon-file-symlink-directory"],
-				["symlinks/Dropbox",      "name icon icon-file-symlink-directory"]
+				["symlinks/Dropbox",      "name icon icon-file-symlink-directory"],
 			]);
 			
 			assertIconClasses(TreeView.entries, [
 				["symlinks/dat.a",        "binary-icon"],
 				["symlinks/empty.file",   "default-icon"],
 				["symlinks/node_modules", "node-icon"],
-				["symlinks/Dropbox",      "dropbox-icon"]
-			], true);
+				["symlinks/Dropbox",      "dropbox-icon"],
+			], {negate: true});
 		});
 		
 		it("uses the colour of its target's icon", () => {
 			TreeView.refresh();
 			assertIconClasses(TreeView.entries, [
 				["symlinks/Dropbox",      "medium-blue"],
-				["symlinks/node_modules", "medium-green"]
+				["symlinks/node_modules", "medium-green"],
 			]);
 			Options.set("defaultIconClass", "icon-file-code medium-green");
 			Options.defaultIconClass.should.eql(["icon-file-code", "medium-green"]);

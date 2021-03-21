@@ -16,7 +16,7 @@ describe("Fuzzy-finder", () => {
 		["data.json",       "primary-line file icon json-icon"],
 		["image.gif",       "primary-line file icon image-icon"],
 		["la.tex",          "primary-line file icon tex-icon"],
-		["markdown.md",     "primary-line file icon markdown-icon"]
+		["markdown.md",     "primary-line file icon markdown-icon"],
 	];
 	const colourClasses = [
 		[".bowerrc",        "medium-yellow"],
@@ -25,7 +25,7 @@ describe("Fuzzy-finder", () => {
 		["data.json",       "medium-cyan"],
 		["image.gif",       "medium-yellow"],
 		["la.tex",          "medium-blue"],
-		["markdown.md",     "medium-blue"]
+		["markdown.md",     "medium-blue"],
 	];
 	
 	before("Running sanity checks", async () => {
@@ -71,7 +71,7 @@ describe("Fuzzy-finder", () => {
 			
 			it("displays monochrome icons if coloured icons are disabled", () => {
 				Options.set("coloured", false);
-				assertIconClasses(FuzzyFinder.entries, colourClasses, true);
+				assertIconClasses(FuzzyFinder.entries, colourClasses, {negate: true});
 				assertIconClasses(FuzzyFinder.entries, iconClasses);
 				
 				Options.set("coloured", true);
@@ -83,19 +83,19 @@ describe("Fuzzy-finder", () => {
 				const changedClasses = "primary-line file icon perl-icon";
 				
 				Options.set("colourChangedOnly", true);
-				assertIconClasses(FuzzyFinder.entries, colourClasses, true);
+				assertIconClasses(FuzzyFinder.entries, colourClasses, {negate: true});
 				assertIconClasses(FuzzyFinder.entries, iconClasses);
 				FuzzyFinder.entries["status-modified.pl"].should.have.classes(changedClasses + " medium-blue");
 				FuzzyFinder.entries["status-new.pl"].     should.have.classes(changedClasses + " medium-blue");
 				
 				Options.set("coloured", false);
-				assertIconClasses(FuzzyFinder.entries, colourClasses, true);
+				assertIconClasses(FuzzyFinder.entries, colourClasses, {negate: true});
 				assertIconClasses(FuzzyFinder.entries, iconClasses);
 				FuzzyFinder.entries["status-modified.pl"].should.have.classes(changedClasses).and.not.have.class("medium-blue");
 				FuzzyFinder.entries["status-new.pl"].     should.have.classes(changedClasses).and.not.have.class("medium-blue");
 				
 				Options.set("coloured", true);
-				assertIconClasses(FuzzyFinder.entries, colourClasses, true);
+				assertIconClasses(FuzzyFinder.entries, colourClasses, {negate: true});
 				assertIconClasses(FuzzyFinder.entries, iconClasses);
 				FuzzyFinder.entries["status-modified.pl"].should.have.classes(changedClasses + " medium-blue");
 				FuzzyFinder.entries["status-new.pl"].     should.have.classes(changedClasses + " medium-blue");
@@ -122,7 +122,7 @@ describe("Fuzzy-finder", () => {
 				it("updates icons if the setting is related", () => {
 					assertIconClasses(FuzzyFinder.entries, colourClasses);
 					Options.set("coloured", false);
-					assertIconClasses(FuzzyFinder.entries, colourClasses, true);
+					assertIconClasses(FuzzyFinder.entries, colourClasses, {negate: true});
 					Options.set("coloured", true);
 					assertIconClasses(FuzzyFinder.entries, colourClasses);
 				});
@@ -148,7 +148,7 @@ describe("Fuzzy-finder", () => {
 					["README.md",             base + "book-icon medium-blue"],
 					["image.gif",             base + "image-icon medium-yellow"],
 					["subfolder/almighty.c",  base + "c-icon medium-blue"],
-					["subfolder/markup.html", base + "html5-icon medium-orange"]
+					["subfolder/markup.html", base + "html5-icon medium-orange"],
 				]);
 				await FuzzyFinder.filter("t");
 				assertIconClasses(FuzzyFinder.entries, [
@@ -158,12 +158,12 @@ describe("Fuzzy-finder", () => {
 					["data.json",             base + "json-icon medium-cyan"],
 					[".gitignore",            base + "git-icon medium-red"],
 					[".default-gear",         base + "gear-icon"],
-					[".default-config",       base + "config-icon"]
-				]);
+					[".default-config",       base + "config-icon"],
+				], {ignoreMissing: true});
 				await FuzzyFinder.filter("k");
 				assertIconClasses(FuzzyFinder.entries, [
 					["package.json",          base + "npm-icon", "medium-red"],
-					["blank.file",            base + "default-icon"]
+					["blank.file",            base + "default-icon"],
 				]);
 			});
 			
@@ -176,16 +176,16 @@ describe("Fuzzy-finder", () => {
 					["README.md",             "medium-blue"],
 					["image.gif",             "medium-yellow"],
 					["subfolder/almighty.c",  "medium-blue"],
-					["subfolder/markup.html", "medium-orange"]
-				], true);
+					["subfolder/markup.html", "medium-orange"],
+				], {negate: true});
 				await FuzzyFinder.filter("t");
 				assertIconClasses(FuzzyFinder.entries, [
 					["text.txt",              "medium-blue"],
 					["la.tex",                "medium-blue"],
 					["subfolder/script.js",   "medium-yellow"],
 					["data.json",             "medium-yellow"],
-					[".gitignore",            "medium-red"]
-				], true);
+					[".gitignore",            "medium-red"],
+				], {negate: true});
 			});
 			
 			it("uses the default icon-class if no icons match", async () => {

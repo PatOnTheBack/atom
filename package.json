@@ -1,7 +1,7 @@
 {
 	"name": "file-icons",
 	"main": "lib/main.js",
-	"version": "2.1.33",
+	"version": "2.1.47",
 	"private": true,
 	"description": "Assign file extension icons and colours for improved visual grepping",
 	"repository": "https://github.com/file-icons/atom",
@@ -13,24 +13,27 @@
 	},
 	"atomTestRunner": "atom-mocha",
 	"dependencies": {
-		"atom-fs": "v0.1.6",
+		"atom-fs": "v0.2.1",
 		"lru-cache": "^5.1.1",
 		"mapped-disposable": "^1.0.3",
-		"micromatch": "^3.1.10"
+		"micromatch": "^4.0.2"
 	},
 	"devDependencies": {
-		"atom-mocha": "^2.2.0",
+		"@alhadis/eslint-config": "^2.3.2",
+		"@babel/eslint-parser": "^7.13.10",
+		"atom-mocha": "^2.2.1",
 		"coffee-script": "^1.12.7",
 		"coffeelint": "^2.1.0",
-		"eslint": "^5.16.0",
+		"eslint": "^7.21.0",
+		"eslint-plugin-import": "^2.22.1",
 		"get-options": "^1.2.0",
-		"rimraf": "^2.6.3",
+		"rimraf": "^3.0.2",
 		"tmp": "^0.1.0",
-		"unzipper": "^0.9.15"
+		"unzipper": "^0.10.8"
 	},
 	"scripts": {
-		"lint": "npx eslint . && npx coffeelint -q config.cson",
-		"test": "atom -t ./test/"
+		"lint": "make lint",
+		"test": "make test"
 	},
 	"providedServices": {
 		"file-icons.element-icons": {
@@ -96,7 +99,7 @@
 					"default": true,
 					"order": 3,
 					"title": "Check modelines",
-					"description": "Allow [Vim](http://vim.wikia.com/wiki/Modeline_magic) and [Emacs](https://www.gnu.org/software/emacs/manual/html_node/emacs/Specifying-File-Variables.html#Specifying-File-Variables) modelines to change icons."
+					"description": "Allow [Vim](https://vim.fandom.com/wiki/Modeline_magic) and [Emacs](https://www.gnu.org/software/emacs/manual/html_node/emacs/Specifying-File-Variables.html#Specifying-File-Variables) modelines to change icons."
 				},
 				"usertypes": {
 					"type": "boolean",
@@ -110,7 +113,7 @@
 					"default": true,
 					"order": 5,
 					"title": "Use .gitattributes",
-					"description": "Honour [`linguist-language`](https://github.com/github/linguist#using-gitattributes) attributes in local `.gitattributes` files."
+					"description": "Honour [`linguist-language`](https://github.com/github/linguist/blob/master/docs/overrides.md#using-gitattributes) attributes in local `.gitattributes` files."
 				}
 			}
 		}

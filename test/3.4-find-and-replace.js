@@ -39,7 +39,7 @@ describe("Find-and-replace", () => {
 			["subfolder/almighty.c",  "c-icon",         "medium-blue"],
 			["subfolder/fad.jsx",     "jsx-icon",       "medium-blue"],
 			["subfolder/markup.html", "html5-icon",     "medium-orange"],
-			["subfolder/script.js",   "js-icon",        "medium-yellow"]
+			["subfolder/script.js",   "js-icon",        "medium-yellow"],
 		];
 		
 		const colours = classes.map(strings => {
@@ -58,7 +58,7 @@ describe("Find-and-replace", () => {
 			assertIconClasses(FindAndReplace.entries, classes);
 			assertIconClasses(FindAndReplace.entries, colours);
 			Options.set("coloured", false);
-			assertIconClasses(FindAndReplace.entries, colours, true);
+			assertIconClasses(FindAndReplace.entries, colours, {negate: true});
 		});
 		
 		when("in a Git repository", () => {
@@ -69,11 +69,11 @@ describe("Find-and-replace", () => {
 					it("doesn't show a coloured icon", () => {
 						assertIconClasses(FindAndReplace.entries, colours);
 						Options.set("colourChangedOnly", true);
-						assertIconClasses(FindAndReplace.entries, colours, true);
+						assertIconClasses(FindAndReplace.entries, colours, {negate: true});
 						Options.set("coloured", false);
-						assertIconClasses(FindAndReplace.entries, colours, true);
+						assertIconClasses(FindAndReplace.entries, colours, {negate: true});
 						Options.set("coloured", true);
-						assertIconClasses(FindAndReplace.entries, colours, true);
+						assertIconClasses(FindAndReplace.entries, colours, {negate: true});
 					}));
 				
 				describe("If the file is modified", () =>
@@ -177,17 +177,17 @@ describe("Find-and-replace", () => {
 				FindAndReplace.entries["status-new.pl"].should.have.class("medium-blue");
 				
 				Options.set("colourChangedOnly", true);
-				assertIconClasses(FindAndReplace.entries, colours, true);
+				assertIconClasses(FindAndReplace.entries, colours, {negate: true});
 				FindAndReplace.entries["status-modified.pl"].should.have.class("medium-blue");
 				FindAndReplace.entries["status-new.pl"].should.have.class("medium-blue");
 				
 				Options.set("coloured", false);
-				assertIconClasses(FindAndReplace.entries, colours, true);
+				assertIconClasses(FindAndReplace.entries, colours, {negate: true});
 				FindAndReplace.entries["status-modified.pl"].should.not.have.class("medium-blue");
 				FindAndReplace.entries["status-new.pl"].should.not.have.class("medium-blue");
 				
 				Options.set("coloured", true);
-				assertIconClasses(FindAndReplace.entries, colours, true);
+				assertIconClasses(FindAndReplace.entries, colours, {negate: true});
 				FindAndReplace.entries["status-modified.pl"].should.have.class("medium-blue");
 				FindAndReplace.entries["status-new.pl"].should.have.class("medium-blue");
 			});
